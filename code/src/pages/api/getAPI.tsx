@@ -1,7 +1,10 @@
 import { IChoice, IQuestion, ISolution } from '@/types/api_types';
 import { API_URL } from '@/constants/globals';
 
-
+/**
+ * 
+ * @param APIURL 
+ * 
 const fetchAnyData = async (APIURL:string): Promise<any> => {
     const res = await fetch(APIURL, {
       method: "GET",
@@ -9,6 +12,8 @@ const fetchAnyData = async (APIURL:string): Promise<any> => {
     return await res.json();
 }
 
+ * @returns 
+ */
 
 /**
  * Get the Choices based on questionId
