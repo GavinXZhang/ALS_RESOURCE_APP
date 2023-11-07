@@ -1,4 +1,4 @@
-import { Stack, Text } from '@mantine/core';
+import { Stack, Text, Button } from '@mantine/core';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Title from '../components/Title/Titles';
 import { IQuestion, IChoice, IBodyContent, ISolution } from '../types/api_types';
@@ -6,11 +6,15 @@ import searchQuestionsChoicesFromJson from '../utils/TempGetNextQuestion';
 import { bodyContentUseStyles } from '../components/MainBody/HelperFunctions/BodyContentStyle';
 import ToggleButton from '../components/MainBody/TogglebButton';
 import SolutionPages from '../utils/SolutionContent';
+import Link from 'next/link';
 
 interface Props {}
 
 const QuestionaireBodyContent: React.FC<Props> = () => {
   const { classes } = bodyContentUseStyles();
+
+  //set default state to home
+  const [currentContent, setCurrentContent] = useState('home'); 
 
   // current question state
   const [currQuestion, setCurrQuestion] = useState<IQuestion>({ id: '2', title: 'Which area do you want to look into?' });
@@ -79,6 +83,7 @@ const QuestionaireBodyContent: React.FC<Props> = () => {
     
       // if the selected choice is Communication, set the page title to Communication
       if (choice.title === 'Communication') {
+        setCurrentContent('communication');
         pageTitle.current = 'Communication';
         image.current = '/titleImgCommunication.png';
       }
@@ -126,30 +131,92 @@ const QuestionaireBodyContent: React.FC<Props> = () => {
     }
   }, [prevSelectedContent, hasSolution, updateChoicesAndQuestions, clickedChoice]);
 
+  const handleButtonClick = (path: string) => {
+    console.log('Navigate to ${path}')
+  }
+
+  const handleContentChange = (content: string) => {
+    setCurrentContent(content);
+  };
+  const CommunicationContent = () => {
+    // Add the content specific to communication here
+    return (
+      <div>
+        <h2>Communication</h2>
+        {/* Add more content and components related to communication */}
+      </div>
+    );
+  };
+  
+  const ComputerAccessContent = () => {
+    // Add the content specific to computer access here
+    return (
+      <div>
+        <h2>Computer Access</h2>
+        {/* Add more content and components related to computer access */}
+      </div>
+    );
+  };
+  
+  const HomeAccessContent = () => {
+    // Add the content specific to home access here
+    return (
+      <div>
+        <h2>Home Access</h2>
+        {/* Add more content and components related to home access */}
+      </div>
+    );
+  };
+  
+  const SmartPhoneAccessContent = () => {
+    // Add the content specific to smartphone access here
+    return (
+      <div>
+        <h2>Smart Phone Access</h2>
+        {/* Add more content and components related to smartphone access */}
+      </div>
+    );
+  };
+  
+  
+
   return (
     <div>
-    <Title hasPrev={(prevSelectedContent.current.length > 1)} prevQuestion={prevQuestion} titleImg={image.current} title={pageTitle.current} />
-    {!hasSolution ? 
-    <Stack
-      spacing="xl"
-      className={classes.outer}
-      sx={(theme) => ({
-        backgroundColor:
-          theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
-      })}
-    >
-      <Text className={classes.text}> {currQuestion.title} </Text>
-      {currChoices.map((choice) => (  
-        <div key={choice.id}>
-        <ToggleButton updateContent={updateChoicesAndQuestions} className={classes.inner} choice={choice} />
-        </div>
-      ))} 
-    </Stack>
-    : 
-    <SolutionPages solution={solution} hasSolution={hasSolution}/>
-    }
+      <Title hasPrev={(prevSelectedContent.current.length > 1)} prevQuestion={prevQuestion} titleImg={image.current} title={pageTitle.current} />
+      {!hasSolution ? (
+        <>
+          <Stack
+            spacing="xl"
+            className={classes.outer}
+            sx={(theme) => ({
+              backgroundColor:
+                theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+            })}
+          >
+            <Text className={classes.text}> {currQuestion.title} </Text>
+            {currChoices.map((choice) => (
+              <div key={choice.id}>
+                <ToggleButton updateContent={updateChoicesAndQuestions} className={classes.inner} choice={choice} />
+              </div>
+            ))}
+          </Stack>
+          <Stack align="center" justify="center" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
+            <Button onClick={() => handleContentChange('communication')}>Communication</Button>
+            <Button onClick={() => handleContentChange('computerAccess')}>Computer Access</Button>
+            <Button onClick={() => handleContentChange('homeAccess')}>Home Access</Button>
+            <Button onClick={() => handleContentChange('smartPhoneAccess')}>Smart Phone Access</Button>
+          </Stack>
+          {/* Conditionally render content based on the current state */}
+          {currentContent === 'communication' && <CommunicationContent />}
+          {currentContent === 'computerAccess' && <ComputerAccessContent />}
+          {currentContent === 'homeAccess' && <HomeAccessContent />}
+          {currentContent === 'smartPhoneAccess' && <SmartPhoneAccessContent />}
+        </>
+      ) : (
+        <SolutionPages solution={solution} hasSolution={hasSolution}/>
+      )}
     </div>
-  );
+  );    
 };
 
 export default QuestionaireBodyContent
